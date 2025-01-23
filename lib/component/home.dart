@@ -8,6 +8,7 @@ import 'package:ebook_ui_assignment/component/menu/notification.dart';
 import 'package:ebook_ui_assignment/component/menu/payment_method.dart';
 import 'package:ebook_ui_assignment/component/menu/promotion.dart';
 import 'package:ebook_ui_assignment/component/menu/user_account.dart';
+import 'package:ebook_ui_assignment/component/setting/setting.dart';
 import 'package:ebook_ui_assignment/theme/them_logic.dart';
 import 'package:ebook_ui_assignment/component/menu.dart';
 import 'package:ebook_ui_assignment/component/menu/subscriber.dart';
@@ -169,6 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
+            
             child: Center(
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(50),
@@ -181,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   )),
             ),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 255, 255, 255),
+              color: Theme.of(context).drawerTheme.backgroundColor,
             ),
           ),
           _buildCard(_lang.home,Icons.home_outlined, Colors.amber.shade300,HomeScreen()),
@@ -191,36 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildCard(_lang.payment,Icons.payment_outlined,Colors.amber.shade300,PaymentMethod()),
           _buildCard(_lang.notification,Icons.notifications_none_outlined,Colors.amber.shade300,NotificationScreen()),
           _buildCard(_lang.aboutUs,Icons.info_outline,Colors.amber.shade300,Aboutus()),
-          ExpansionTile(
-            title: Text("Theme Color"),
-            initiallyExpanded: true,
-            children: [
-              ListTile(
-                leading: Icon(Icons.phone_android),
-                title: Text(_lang.toSystemMode),
-                onTap: () {
-                  context.read<ThemeLogic>().changeToSystem();
-                },
-                trailing: mode == ThemeMode.system ? Icon(Icons.check) : null,
-              ),
-              ListTile(
-                leading: Icon(Icons.light_mode),
-                title: Text(_lang.toLightMode),
-                onTap: () {
-                    context.read<ThemeLogic>().changeToLight();
-                },
-                trailing: mode == ThemeMode.light ? Icon(Icons.check) : null,
-              ),
-               ListTile(
-                leading: Icon(Icons.dark_mode),
-                title: Text(_lang.toDarkMode),
-                onTap: () {
-                  context.read<ThemeLogic>().changeToDark();
-                },
-                trailing: mode == ThemeMode.dark ? Icon(Icons.check) : null,
-              ),
-            ],
-          ),
+          _buildCard(_lang.setting,Icons.settings,Colors.amber.shade300,SettingScreen()),
         ],
       ),
     );

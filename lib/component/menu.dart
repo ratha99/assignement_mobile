@@ -43,29 +43,6 @@ class _MenuScreenState extends State<MenuScreen> {
           _buildCard(_lang.aboutUs,Icons.info_outline,Colors.amber.shade300,Aboutus()),
           _buildCard(_lang.policy,Icons.policy,Colors.amber.shade300,PolicyScreen()),
           _buildCard(_lang.suppot,Icons.support,Colors.amber.shade300,Subscriber()),
-          ExpansionTile(
-            title: Text(_lang.language),
-            initiallyExpanded: true,
-            children: [
-              ListTile(
-                leading: Text("ខ្មែរ"),
-                title: Text(_lang.changeToKhmer),
-                onTap: () {
-                  context.read<LanguageLogic>().changToKhmer();
-                },
-                trailing: _langIndex == 0 ? Icon(Icons.check_circle) : null,
-              ),
-              ListTile(
-                leading: Text("EN"),
-                title: Text(_lang.changeToEnglish),
-                onTap: () {
-                  context.read<LanguageLogic>().changeToEnglish();
-                },
-                trailing: _langIndex == 1 ? Icon(Icons.check_circle) : null,
-              ),
-
-            ],
-          ),
       ],
     );
   }

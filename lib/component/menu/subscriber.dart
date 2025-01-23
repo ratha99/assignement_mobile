@@ -83,8 +83,8 @@ class _SubscriberState extends State<Subscriber> {
         padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
         child: Card(
           color: isSelected
-              ? Colors.blue[100]
-              : Colors.white, // Set background color dynamically
+              ? const Color.fromARGB(255, 87, 120, 146)
+              : Theme.of(context).drawerTheme.backgroundColor, // Set background color dynamically
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),

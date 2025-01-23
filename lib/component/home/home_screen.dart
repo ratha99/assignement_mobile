@@ -1,9 +1,15 @@
+import 'package:ebook_ui_assignment/component/home/audio.dart';
+import 'package:ebook_ui_assignment/component/home/book.dart';
 import 'package:ebook_ui_assignment/component/home/book_data.dart';
+import 'package:ebook_ui_assignment/component/home/book_detail_screen.dart';
+import 'package:ebook_ui_assignment/component/langguage_translate.dart';
 import 'package:ebook_ui_assignment/component/library/downloads_screen.dart';
+import 'package:ebook_ui_assignment/language/language.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:provider/provider.dart';
 class HomeMenu extends StatefulWidget {
   @override
   State<HomeMenu> createState() => _HomeMenuState();
@@ -11,8 +17,10 @@ class HomeMenu extends StatefulWidget {
 
 class _HomeMenuState extends State<HomeMenu> {
   final PageController _pageController = PageController();
+  Language _lang = Khmer();
   @override
   Widget build(BuildContext context) {
+     _lang = context.watch<LanguageLogic>().lang;
     return Scaffold(
       body: _buildBody(),
     );
@@ -25,8 +33,10 @@ class _HomeMenuState extends State<HomeMenu> {
         _buildSearch(),
         _buildCategoryView(),
         _buildNewBook(bookModelList, Axis.horizontal), // First book list - Horizontal
-        _buildBookaLabel(),
-        _buildBook(bookModelList), // Second book list - Vertical
+        _buildBookaLabel(_lang.book),
+        _buildBook(bookModelList), 
+        _buildBookaLabel(_lang.audio),
+         _buildBook(bookModelList), // Second book list - Vertical
       ],
     );
   }
@@ -35,7 +45,7 @@ class _HomeMenuState extends State<HomeMenu> {
     return SizedBox(
       height: 90, // Set height based on screen
       child: GridView.builder(
-        controller: _pageController,
+        
         physics: BouncingScrollPhysics(),
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(10),
@@ -44,23 +54,25 @@ class _HomeMenuState extends State<HomeMenu> {
           mainAxisSpacing: 5,
           crossAxisSpacing: 5,
         ),
-        itemCount: category.length,
+        itemCount: _getCategory().length,
         itemBuilder: (context, index) {
-          return _buildCategoryItem(category[index]);
+          return _buildCategoryItem(_getCategory()[index]);
         },
       ),
     );
   }
 
-  List<Map<String, dynamic>> category = [
-    {"title": "Book", "icon": Icons.headphones},
-    {"title": "Audio", "icon": Icons.audio_file}
-  ];
+  List<Map<String, dynamic>> _getCategory() {
+    return [
+      {"title": _lang.book, "icon": Icons.headphones, "page": BookScreen()},
+      {"title": _lang.audio, "icon": Icons.audio_file, "page": AudioScreen()}
+    ];
+  }
 
   Widget _buildCategoryItem(Map<String, dynamic> item) {
     return Column(
       children: [
-        _buildCard(item["title"], item["icon"], DownloadsScreen()),
+        _buildCard(item["title"], item["icon"], item["page"]),
       ],
     );
   }
@@ -85,7 +97,7 @@ class _HomeMenuState extends State<HomeMenu> {
       padding: const EdgeInsets.all(10.0),
       child: TextField(
         decoration: InputDecoration(
-          hintText: 'Search',
+          hintText: _lang.search,
           suffixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
@@ -101,6 +113,7 @@ class _HomeMenuState extends State<HomeMenu> {
         SizedBox(
           height: 200, // Provide a fixed height
           child: PageView.builder(
+            controller: _pageController,
             physics: BouncingScrollPhysics(),
             scrollDirection: direc, // Use the `Axis` parameter
             itemCount: items.length,
@@ -129,81 +142,88 @@ class _HomeMenuState extends State<HomeMenu> {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Card(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start, // Align items at the top
-          children: [
-            Container(
-              height: 150, // Adjust height as needed
-              width: 100, // Adjust width as needed
-              margin: EdgeInsets.all(10), // Add some spacing
-              child: Image.network(
-                items.img,
-                fit: BoxFit.cover, // Ensure the image fits properly
+        child: InkWell(
+           onTap: () {
+          Navigator.of(context).push(
+            CupertinoPageRoute(builder: (context) => Detail_Screen(items)),
+          );
+        },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start, // Align items at the top
+            children: [
+              Container(
+                height: 150, // Adjust height as needed
+                width: 100, // Adjust width as needed
+                margin: EdgeInsets.all(10), // Add some spacing
+                child: Image.network(
+                  items.img,
+                  fit: BoxFit.cover, // Ensure the image fits properly
+                ),
               ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
-                children: [
-                  Text(
-                    items.title,
-                    overflow: TextOverflow.ellipsis, // Handle long text
-                    maxLines: 2, // Limit text to 2 lines
-                    style: TextStyle(
-                      fontSize: 14, // Adjust font size
-                      fontWeight: FontWeight.bold,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+                  children: [
+                    Text(
+                      items.title,
+                      overflow: TextOverflow.ellipsis, // Handle long text
+                      maxLines: 2, // Limit text to 2 lines
+                      style: TextStyle(
+                        fontSize: 14, // Adjust font size
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5), // Add some spacing between title and date
-                  Text(
-                    "Price: USD ${items.price}",
-                    style: TextStyle(
-                      fontSize: 14, // Adjust font size
-                      fontWeight: FontWeight.bold,
+                    SizedBox(height: 5), // Add some spacing between title and date
+                    Text(
+                      "Price: USD ${items.price}",
+                      style: TextStyle(
+                        fontSize: 14, // Adjust font size
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5), // Add some spacing between title and date
-                  Text(
-                    "Date: ${items.date}",
-                    style: TextStyle(
-                      fontSize: 14, // Adjust font size
-                      fontWeight: FontWeight.normal,
+                    SizedBox(height: 5), // Add some spacing between title and date
+                    Text(
+                      "Date: ${items.date}",
+                      style: TextStyle(
+                        fontSize: 14, // Adjust font size
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5),
-                  RatingStars(
-                    value: items.rate.toDouble(),
-                    starColor: Colors.orange,
-                    starOffColor: Colors.grey,
-                    valueLabelColor: Colors.orange,
-                    starSize: 15,
-                    valueLabelTextStyle:
-                        TextStyle(fontSize: 15, color: Colors.white),
-                  ),
-                ],
+                    SizedBox(height: 5),
+                    RatingStars(
+                      value: items.rate.toDouble(),
+                      starColor: Colors.orange,
+                      starOffColor: Colors.grey,
+                      valueLabelColor: Colors.orange,
+                      starSize: 15,
+                      valueLabelTextStyle:
+                          TextStyle(fontSize: 15, color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildBookaLabel() {
+  Widget _buildBookaLabel(String category) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Book",
+           category,
             style: TextStyle(fontSize: 24),
           ),
           TextButton(
             onPressed: () {
               // Add navigation or functionality here
             },
-            child: Text("See More"),
+            child: Text(_lang.seemore),
           ),
         ],
       ),

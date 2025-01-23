@@ -37,6 +37,10 @@ class Language {
   String get phone => "Phone";
   String get email => "Email";
   String get save =>"Save";
+  String get setting => "Setting";
+  String get theme => "Theme Color";
+  String get book => "Book";
+  String get audio => "Audio";
 }
 class Khmer extends Language {
   String get title => "សូមស្វាគមន៍";
@@ -77,4 +81,9 @@ class Khmer extends Language {
   String get phone => "លេខទូរស័ព្ទ";
   String get email => "អ៊ីម៉ែល";
   String get save =>"រក្សាទុក";
+  String get setting => "ការកំណត់";
+  String get theme => "ពន្លឺ";
+  String get book => "សៀវភៅ";
+  String get audio => "សំឡេង";
+
 }
